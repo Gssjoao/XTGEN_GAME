@@ -5,8 +5,8 @@ import sys
 pygame.init()
 
 #criando uma tela 
-largura = 600
-altura = 800
+largura = 800
+altura = 600
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption("XTEGEN")
 
