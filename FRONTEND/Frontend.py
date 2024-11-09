@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 import random
-import pygame.locals
+from pygame.locals import *
 from pygame.sprite import Group
 
 
@@ -11,45 +11,63 @@ class dragon(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
+        largura, altura = 150, 150
 
-        self.images = [pygame.image.load('IMGs/Dragão2.png').convert_alpha(),
-                      pygame.image.load('IMGs/Dragão1.png').convert_alpha(),
-                      pygame.image.load('IMGs/Dragão3.png').convert_alpha()]
-
+        self.images = [pygame.transform.scale(pygame.image.load('IMGs/Dragão2.png').convert_alpha(),  (largura, altura)),
+                      pygame.transform.scale(pygame.image.load('IMGs/Dragão1.png').convert_alpha(),  (largura, altura)),
+                      pygame.transform.scale(pygame.image.load('IMGs/Dragão3.png').convert_alpha(),  (largura, altura))]
+        
+        self.speed = SPEED
         self.current_image = 0
         self.image = pygame.image.load('IMGs/Dragão2.png').convert_alpha()          
         self.rect = self.image.get_rect()
         self.rect[0] = SCREEN_WIDTH / 4
-        self.rect[1] = SCREEN_HEIGTH / 4
-        print(self.rect)
+        self.rect[1] = SCREEN_HEIGHT / 4
 
     def update(self):
-        self.current_image = (self.current_image + 1) % 4
+        self.current_image = (self.current_image + 1) % 3
         self.image = self.images[ self.current_image ]
-        pass
+     
+        
+        self.speed += GRAVITY
+         # Update height
+        self.rect[1] += self.speed
+
+    def bump(self):
+        self.speed = -SPEED
 #inicializar o PYGAME
 pygame.init()
 
 #criando uma tela 
 SCREEN_WIDTH = 800
-SCREEN_HEIGTH = 480
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGTH))
+SCREEN_HEIGHT = 480
+SPEED = 10
+GRAVITY = 1
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("XTEGEN")
+
 dragon_group = pygame.sprite.Group()
 dragon = dragon()
 dragon_group.add(dragon)
+
 #cor de fundo do display
-BACKGROUD_DISPLAY = pygame.transform.scale2x(pygame.image.load(os.path.join('IMGs', 'fundo_XTGEN_GAME.gif')))
+BACKGROUD_DISPLAY = pygame.transform.scale2x(pygame.image.load(os.path.join('IMGs', 'Fundo_Display.jpg')))
+clock = pygame.time.Clock()
 
 #loop principal
 while True:
+    clock.tick(20)
     for event in pygame.event.get():
-        if event.type == pygame.quit:
-            pygame.quit()
+        if event.type == pygame.QUIT:
+            pygame.QUIT()
             sys.exit()
+
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                dragon.bump()
  #preenche a fundo de tela   atualiza  a tela
-        screen.blit(BACKGROUD_DISPLAY, (0, 0))
-        dragon_group.update()
-        dragon_group.draw(screen)
-        pygame.display.update() 
+    screen.blit(BACKGROUD_DISPLAY, (0, 0))
+    dragon_group.update()
+    dragon_group.draw(screen)
+    pygame.display.update() 
         
